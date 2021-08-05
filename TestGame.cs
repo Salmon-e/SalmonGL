@@ -7,6 +7,7 @@ using OpenTK.Mathematics;
 using OpenTK.Windowing;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
+using System.Linq;
 
 namespace SalmonGL
 {
@@ -14,12 +15,15 @@ namespace SalmonGL
     {
         VertexBuffer buffer;
         Shader shader;
-        Vector3[] verts =
-        {
-            new Vector3(0, 0, 0),
-            new Vector3(1, 1, 0),
-            new Vector3(1, 0, 1)
+        Vector2[] verts = {
+            new Vector2(-100, 100),
+            new Vector2(100, 100),
+            new Vector2(-100, -100),
+            new Vector2(-100, -100),
+            new Vector2(100, -100),
+            new Vector2(100, 100)
         };
+        
         public TestGame() : base(GameWindowSettings.Default, NativeWindowSettings.Default)
         {
 
@@ -27,11 +31,23 @@ namespace SalmonGL
         protected override void OnLoad()
         {
             base.OnLoad();
+            Random r = new Random();            
             shader = new Shader("vert.glsl", "frag.glsl");
-            buffer = new VertexBuffer(new VertexFootprint("f3-position"), BufferUsageHint.StaticDraw);
-            buffer.BufferData(verts);
+            shader.SetUniform("resolution", Size.ToVector2());
+            buffer = new VertexBuffer(new VertexFootprint("f2-position"), BufferUsageHint.StaticDraw);
+            buffer.BufferData(verts, true);            
             buffer.VertexAttribPointers(shader);
             GL.ClearColor(Color4.CornflowerBlue);
+        }        
+        protected override void OnUpdateFrame(FrameEventArgs args)
+        {
+            base.OnUpdateFrame(args);           
+        }
+        protected override void OnResize(ResizeEventArgs e)
+        {
+            base.OnResize(e);
+            GL.Viewport(0, 0, e.Width, e.Height);
+            shader.SetUniform("resolution", e.Size.ToVector2());
         }
         protected override void OnRenderFrame(FrameEventArgs args)
         {
@@ -39,7 +55,7 @@ namespace SalmonGL
 
             shader.Activate();
             buffer.Enable();
-            GL.DrawArrays(PrimitiveType.Triangles, 0, 3);
+            GL.DrawElements(PrimitiveType.Triangles, buffer.indices.Length, DrawElementsType.UnsignedInt, 0);
             Context.SwapBuffers();
             base.OnRenderFrame(args);
         }
