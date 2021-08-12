@@ -13,39 +13,43 @@ namespace SalmonGL
 {
     public class TestGame : GameWindow
     {
-        RenderBatch<PosColor> renderBatch;
+        RenderBatch<Vertex> renderBatch;
         Shader shader;
-        struct PosColor
+        struct Vertex
         {
             Vector2 position;
-            Vector4 color;            
-            public PosColor(Vector2 position, Color4 color)
+            Vector4 color;
+            Vector2 texCoord;
+            public Vertex(Vector2 position, Color4 color, Vector2 texCoord)
             {                
                 this.position = position + new Vector2(50, 50);
-                this.color = new Vector4(color.R, color.G, color.B, color.A);                
+                this.color = new Vector4(color.R, color.G, color.B, color.A);
+                this.texCoord = texCoord;
             }
         }
-        PosColor[] verts = {
-            new PosColor(new Vector2(-100, 100),  Color4.Red),
-            new PosColor(new Vector2(100, 100),   Color4.White),
-            new PosColor(new Vector2(-100, -100), Color4.White),
-            new PosColor(new Vector2(-100, -100), Color4.White),
-            new PosColor(new Vector2(100, -100),  Color4.Green),
-            new PosColor(new Vector2(100, 100),   Color4.White)
+        Vertex[] verts = {
+            new Vertex(new Vector2(-100, 100),  Color4.Red  , new Vector2(1, 0)),
+            new Vertex(new Vector2(100, 100),   Color4.White, new Vector2(0, 0)),
+            new Vertex(new Vector2(-100, -100), Color4.White, new Vector2(1, 1)),
+            new Vertex(new Vector2(-100, -100), Color4.White, new Vector2(1, 1)),
+            new Vertex(new Vector2(100, -100),  Color4.Green, new Vector2(0, 1)),
+            new Vertex(new Vector2(100, 100),   Color4.White, new Vector2(0, 0))
         };
         
         public TestGame() : base(GameWindowSettings.Default, NativeWindowSettings.Default)
         {
-
+            
         }
         protected override void OnLoad()
         {
             base.OnLoad();
             RenderTime = 1f / 60;
             shader = new Shader("vert.glsl", "frag.glsl");            
-            renderBatch = new RenderBatch<PosColor>(shader, new VertexFootprint("f2-position f4-inColor"), BufferUsageHint.DynamicDraw, true);
+            renderBatch = new RenderBatch<Vertex>(shader, new VertexFootprint("f2-position f4-inColor f2-texCoord"), BufferUsageHint.DynamicDraw, true);
             renderBatch.AddVertices(verts);            
-            
+            Texture2D texture = new Texture2D("C:/bunny.png");
+            renderBatch.SetTexture(texture, TextureUnit.Texture0);
+            shader.SetUniform("texture0", texture);
             GL.ClearColor(Color4.CornflowerBlue);
         }        
         protected override void OnUpdateFrame(FrameEventArgs args)

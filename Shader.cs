@@ -70,7 +70,14 @@ namespace SalmonGL
             {
                 Matrix4 v = (Matrix4)value;
                 GL.ProgramUniformMatrix4(Program, location, false, ref v);
-            }            
+            }  
+            
+            if(value is Texture2D)
+            {
+                Texture2D tex = (Texture2D)value;
+                tex.Enable(tex.currentUnit);
+                GL.ProgramUniform1(Program, location, (int)tex.currentUnit - (int) TextureUnit.Texture0);
+            }
         }
         public void Enable()
         {
