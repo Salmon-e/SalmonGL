@@ -28,11 +28,13 @@ namespace SalmonGL
         {
             GL.BindBuffer(BufferTarget.ArrayBuffer, _vbo);
             GL.BindVertexArray(_vao);
+            int offset = 0;
             for(int i = 0; i < footprint.types.Length; i++)
             {
                 int location = GL.GetAttribLocation(shader.Program, footprint.names[i]);
-                GL.VertexAttribPointer(location, footprint.counts[i], footprint.types[i], false, 0, 0);
+                GL.VertexAttribPointer(location, footprint.counts[i], footprint.types[i], false, footprint.size, offset);
                 GL.EnableVertexAttribArray(location);
+                offset += VertexFootprint.TypeSizes[footprint.types[i]] * footprint.counts[i];
             }
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
             GL.BindVertexArray(0);

@@ -72,7 +72,7 @@ namespace SalmonGL
                 GL.ProgramUniformMatrix4(Program, location, false, ref v);
             }            
         }
-        public void Activate()
+        public void Enable()
         {
             GL.UseProgram(Program);
         }

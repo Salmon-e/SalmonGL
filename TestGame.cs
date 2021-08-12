@@ -15,13 +15,23 @@ namespace SalmonGL
     {
         VertexBuffer buffer;
         Shader shader;
-        Vector2[] verts = {
-            new Vector2(-100, 100),
-            new Vector2(100, 100),
-            new Vector2(-100, -100),
-            new Vector2(-100, -100),
-            new Vector2(100, -100),
-            new Vector2(100, 100)
+        struct PosColor
+        {
+            Vector2 position;
+            Vector4 color;            
+            public PosColor(Vector2 position, Color4 color)
+            {                
+                this.position = position + new Vector2(50, 50);
+                this.color = new Vector4(color.R, color.G, color.B, color.A);                
+            }
+        }
+        PosColor[] verts = {
+            new PosColor(new Vector2(-100, 100),  Color4.Red),
+            new PosColor(new Vector2(100, 100),   Color4.White),
+            new PosColor(new Vector2(-100, -100), Color4.White),
+            new PosColor(new Vector2(-100, -100), Color4.White),
+            new PosColor(new Vector2(100, -100),  Color4.Green),
+            new PosColor(new Vector2(100, 100),   Color4.White)
         };
         
         public TestGame() : base(GameWindowSettings.Default, NativeWindowSettings.Default)
@@ -31,10 +41,9 @@ namespace SalmonGL
         protected override void OnLoad()
         {
             base.OnLoad();
-            Random r = new Random();            
-            shader = new Shader("vert.glsl", "frag.glsl");
-            shader.SetUniform("resolution", Size.ToVector2());
-            buffer = new VertexBuffer(new VertexFootprint("f2-position"), BufferUsageHint.StaticDraw);
+            RenderTime = 1f / 60;
+            shader = new Shader("vert.glsl", "frag.glsl");            
+            buffer = new VertexBuffer(new VertexFootprint("f2-position f4-inColor"), BufferUsageHint.DynamicDraw, true);
             buffer.BufferData(verts, true);            
             buffer.VertexAttribPointers(shader);
             GL.ClearColor(Color4.CornflowerBlue);
@@ -53,7 +62,7 @@ namespace SalmonGL
         {
             GL.Clear(ClearBufferMask.ColorBufferBit);
 
-            shader.Activate();
+            shader.Enable();
             buffer.Enable();
             GL.DrawElements(PrimitiveType.Triangles, buffer.indices.Length, DrawElementsType.UnsignedInt, 0);
             Context.SwapBuffers();
