@@ -12,16 +12,24 @@ namespace SalmonGL
         public int Program;
         public Shader(string vertPath, string fragPath)
         {
-            string vertCode = new StreamReader(vertPath, Encoding.UTF8).ReadToEnd();
-            string fragCode = new StreamReader(fragPath, Encoding.UTF8).ReadToEnd();
+            string vertSource;
+            string fragSource;
+            using (var reader = new StreamReader(vertPath, Encoding.UTF8))
+                vertSource = reader.ReadToEnd();
+            using (var reader = new StreamReader(fragPath, Encoding.UTF8))
+                fragSource = reader.ReadToEnd();
 
+            Compile(vertSource, fragSource);
+        }
+        protected void Compile(string vertSource, string fragSource)
+        {
             int vert = GL.CreateShader(ShaderType.VertexShader);
             int frag = GL.CreateShader(ShaderType.FragmentShader);
 
-            GL.ShaderSource(vert, vertCode);
-            GL.ShaderSource(frag, fragCode);
+            GL.ShaderSource(vert, vertSource);
+            GL.ShaderSource(frag, fragSource);
 
-            GL.CompileShader(vert);            
+            GL.CompileShader(vert);
             GL.CompileShader(frag);
             Console.WriteLine($"{GL.GetShaderInfoLog(vert)}\n\n{GL.GetShaderInfoLog(frag)}");
             Program = GL.CreateProgram();
