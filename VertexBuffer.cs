@@ -13,6 +13,7 @@ namespace SalmonGL
         public BufferUsageHint usageHint;
         public VertexFootprint footprint;
         public uint[] indices;
+        public bool UseEbo => _ebo != -1;
         public VertexBuffer(VertexFootprint footprint, BufferUsageHint usageHint, bool useEbo = true)
         {
             _vbo = GL.GenBuffer();

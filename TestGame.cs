@@ -13,7 +13,7 @@ namespace SalmonGL
 {
     public class TestGame : GameWindow
     {
-        VertexBuffer buffer;
+        RenderBatch<PosColor> renderBatch;
         Shader shader;
         struct PosColor
         {
@@ -43,9 +43,9 @@ namespace SalmonGL
             base.OnLoad();
             RenderTime = 1f / 60;
             shader = new Shader("vert.glsl", "frag.glsl");            
-            buffer = new VertexBuffer(new VertexFootprint("f2-position f4-inColor"), BufferUsageHint.DynamicDraw, true);
-            buffer.BufferData(verts, true);            
-            buffer.VertexAttribPointers(shader);
+            renderBatch = new RenderBatch<PosColor>(shader, new VertexFootprint("f2-position f4-inColor"), BufferUsageHint.DynamicDraw, true);
+            renderBatch.AddVertices(verts);            
+            
             GL.ClearColor(Color4.CornflowerBlue);
         }        
         protected override void OnUpdateFrame(FrameEventArgs args)
@@ -62,9 +62,7 @@ namespace SalmonGL
         {
             GL.Clear(ClearBufferMask.ColorBufferBit);
 
-            shader.Enable();
-            buffer.Enable();
-            GL.DrawElements(PrimitiveType.Triangles, buffer.indices.Length, DrawElementsType.UnsignedInt, 0);
+            renderBatch.Render(false);
             Context.SwapBuffers();
             base.OnRenderFrame(args);
         }
