@@ -21,6 +21,7 @@ namespace SalmonGL
 
             Compile(vertSource, fragSource);
         }
+        protected Shader() { }
         protected void Compile(string vertSource, string fragSource)
         {
             int vert = GL.CreateShader(ShaderType.VertexShader);
@@ -31,7 +32,7 @@ namespace SalmonGL
 
             GL.CompileShader(vert);
             GL.CompileShader(frag);
-            Console.WriteLine($"{GL.GetShaderInfoLog(vert)}\n\n{GL.GetShaderInfoLog(frag)}");
+            Console.WriteLine($"Vertex shader: {GL.GetShaderInfoLog(vert)}\n\nFragment shader: {GL.GetShaderInfoLog(frag)}");
             Program = GL.CreateProgram();
             GL.AttachShader(Program, vert);
             GL.AttachShader(Program, frag);
