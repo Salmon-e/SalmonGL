@@ -20,10 +20,22 @@ namespace SalmonGL
             this.shader = shader;
             queuedVertices = new List<T>();
         }
-        public void SetTexture(Texture2D texture, TextureUnit unit)
+        public void AddTexture(Texture2D texture, TextureUnit unit)
         {
             texture.currentUnit = unit;
             Texture[(int)unit-(int)TextureUnit.Texture0] = texture;
+        }
+        public void AddTexture(Texture2D texture)
+        {            
+            for(int i = 0; i < Texture.Length; i++)
+            {
+                if(Texture[i] is null)
+                {
+                    Texture[i] = texture;
+                    texture.currentUnit = TextureUnit.Texture0 + i;                    
+                    break;
+                }
+            }           
         }
         public void AddVertices(T[] newVertices)
         {

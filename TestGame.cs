@@ -48,8 +48,12 @@ namespace SalmonGL
             renderBatch = new RenderBatch<Vertex>(shader, new VertexFootprint("f2-position f4-inColor f2-texCoord"), BufferUsageHint.DynamicDraw, true);
             renderBatch.AddVertices(verts);            
             Texture2D texture = new Texture2D("C:/bunny.png");
-            renderBatch.SetTexture(texture, TextureUnit.Texture0);
+            Texture2D texture2 = new Texture2D("C:/bunny2.jpg");
+            renderBatch.AddTexture(texture);
+            renderBatch.AddTexture(texture);
             shader.SetUniform("texture0", texture);
+            shader.SetUniform("texture1", texture2);
+
             GL.ClearColor(Color4.CornflowerBlue);
         }        
         protected override void OnUpdateFrame(FrameEventArgs args)
