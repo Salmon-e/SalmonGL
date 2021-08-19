@@ -43,12 +43,18 @@ namespace SalmonGL
         protected override void OnLoad()
         {
             base.OnLoad();
+            TextureAtlas atlas = new TextureAtlas();
+            atlas.AddImage("green.png", "green");
+            atlas.AddImage("blue.png", "blue");
+            atlas.AddImage("red.png", "red");
+
+            atlas.CreateAtlas();
             RenderTime = 1f / 60;
             shader = new Shader("vert.glsl", "frag.glsl");            
             renderBatch = new RenderBatch<Vertex>(shader, new VertexFootprint("f2-position f4-inColor f2-texCoord"), BufferUsageHint.DynamicDraw, true);
             renderBatch.AddVertices(verts);            
             Texture2D texture = new Texture2D("C:/bunny.png");   
-            Texture2D texture2 = new Texture2D("C:/bunny2.jpg");
+            Texture2D texture2 = atlas.texture;
             renderBatch.AddTexture(texture);
             renderBatch.AddTexture(texture2);
             shader.SetUniform("texture0", texture);

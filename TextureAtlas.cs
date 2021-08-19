@@ -13,11 +13,11 @@ namespace SalmonGL
 {
     public class TextureAtlas
     {
-        Texture2D texture;
+        public Texture2D texture;
 
         List<NamedImage> images = new List<NamedImage>();
         
-        public Dictionary<string, TextureRegion> regions;
+        public Dictionary<string, TextureRegion> regions = new Dictionary<string, TextureRegion>();
         public void AddImage(string path, string name)
         {
             images.Add(new NamedImage(name, Image.Load<Rgba32>(path)));
@@ -70,7 +70,8 @@ namespace SalmonGL
             {
                 Point offset = new Point((int)offsetArray[i].X, (int)offsetArray[i].Y);
                 atlas.Mutate(im => im.DrawImage(images[i].image, offset, 1));
-            }            
+            }
+            atlas.Mutate(i => i.Flip(FlipMode.Vertical));            
             Vector2 atlasSize = new Vector2(atlas.Width, atlas.Height);
             foreach(NamedImage image in images)
             {
